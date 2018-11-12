@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.kmt.trailing.bot.Trade">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="14" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="507" height="409"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="e7c98" class="javax.swing.JLabel" binding="logo">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Kripto Muhtar Trailing Stoploss Bot"/>
+        </properties>
+      </component>
+      <component id="c4e68" class="javax.swing.JLabel" binding="balance_text">
+        <constraints>
+          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="694dd" class="javax.swing.JComboBox" binding="coinList">
+        <constraints>
+          <grid row="1" column="0" row-span="6" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="9f520" class="javax.swing.JButton" binding="start_trail">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Başlat"/>
+        </properties>
+      </component>
+      <component id="f0e88" class="javax.swing.JLabel" binding="target_label">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="80784"/>
+          <text value="Hedef"/>
+        </properties>
+      </component>
+      <component id="1d14f" class="javax.swing.JCheckBox" binding="target_percent_cb">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Yüzde"/>
+        </properties>
+      </component>
+      <component id="9c381" class="javax.swing.JCheckBox" binding="target_price_cb">
+        <constraints>
+          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Fiyat"/>
+        </properties>
+      </component>
+      <component id="4cb80" class="javax.swing.JTextField" binding="stop_text">
+        <constraints>
+          <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="373cf" class="javax.swing.JLabel" binding="stop_label">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="4cb80"/>
+          <text value="Stop Fiyat"/>
+        </properties>
+      </component>
+      <component id="f504" class="javax.swing.JLabel" binding="trail_label">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Trail Yüzdesi"/>
+        </properties>
+      </component>
+      <component id="b97d9" class="javax.swing.JTextField" binding="trail_text">
+        <constraints>
+          <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <text value="1"/>
+        </properties>
+      </component>
+      <component id="37d61" class="javax.swing.JButton" binding="stop_trail">
+        <constraints>
+          <grid row="11" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="KAPAT"/>
+        </properties>
+      </component>
+      <scrollpane id="f15b0">
+        <constraints>
+          <grid row="13" column="0" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <verticalScrollBarPolicy value="22"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="fcc31" class="javax.swing.JTextArea" binding="status_text" custom-create="true">
+            <constraints/>
+            <properties>
+              <columns value="10"/>
+              <editable value="false"/>
+              <text value="KM Trailing Bot v0.1"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="80784" class="javax.swing.JFormattedTextField" binding="target_text">
+        <constraints>
+          <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c3a12" class="javax.swing.JLabel" binding="selected_coin_price">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="694dd"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="65f16" class="javax.swing.JLabel" binding="coin_amount">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="d1427"/>
+          <text value="Satılacak Coin Miktarı"/>
+        </properties>
+      </component>
+      <component id="d1427" class="javax.swing.JTextField" binding="coin_amount_text">
+        <constraints>
+          <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="d341f" class="javax.swing.JTextArea" binding="info_text">
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="7" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="10" height="10"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+    </children>
+  </grid>
+</form>
