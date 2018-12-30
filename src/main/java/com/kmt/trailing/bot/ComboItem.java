@@ -1,9 +1,3 @@
-/*
-
-contact: hlcii@protonmail.com
-
- */
- 
 package com.kmt.trailing.bot;
 
 public class ComboItem {

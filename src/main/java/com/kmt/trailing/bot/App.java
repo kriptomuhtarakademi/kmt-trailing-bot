@@ -1,9 +1,3 @@
-/*
-
-contact: hlcii@protonmail.com
-
- */
-
 package com.kmt.trailing.bot;
 
 import javax.swing.*;
@@ -71,8 +65,10 @@ public class App {
                 final BinanceApiRestClient client = factory.newRestClient();
 
                 try {
-
-                    Boolean acc = client.getAccount(BinanceApiConstants.DEFAULT_RECEIVING_WINDOW, client.getServerTime()).isCanTrade();
+                    long start = System.currentTimeMillis();
+                    long end = System.currentTimeMillis();
+                    long gap = end - start;
+                    Boolean acc = client.getAccount(BinanceApiConstants.DEFAULT_RECEIVING_WINDOW, client.getServerTime() + gap).isCanTrade();
 
                     if (acc) {
                         SwingUtilities.invokeLater(new Runnable() {

@@ -1,9 +1,3 @@
-/*
-
-contact: hlcii@protonmail.com
-
- */
-
 package com.kmt.trailing.bot;
 
 import com.binance.api.client.BinanceApiClientFactory;
@@ -64,7 +58,11 @@ public class Trade {
 
         try {
 
-            Account account = client.getAccount(BinanceApiConstants.DEFAULT_RECEIVING_WINDOW, client.getServerTime());
+            long start = System.currentTimeMillis();
+            long end = System.currentTimeMillis();
+            long gap = end - start;
+
+            Account account = client.getAccount(BinanceApiConstants.DEFAULT_RECEIVING_WINDOW, client.getServerTime() + gap);
 
             Boolean acc = (Boolean) account.isCanTrade();
 
@@ -99,35 +97,35 @@ public class Trade {
 
                 if ((target_price_cb.isSelected() || target_percent_cb.isSelected()) && w1 == null) {
 
-                        Double stop = Double.parseDouble(stop_text.getText());
-                        Double trail = Double.parseDouble(trail_text.getText());
-                        String amount = coin_amount_text.getText();
+                    Double stop = Double.parseDouble(stop_text.getText());
+                    Double trail = Double.parseDouble(trail_text.getText());
+                    String amount = coin_amount_text.getText();
 
-                        int target = 0;
+                    int target = 0;
 
-                        if (target_percent_cb.isSelected()) {
-                            System.out.println("percent");
-                            target = 1;
-                        } else if (target_price_cb.isSelected()) {
-                            System.out.println("price");
-                            target = 2;
-                        }
+                    if (target_percent_cb.isSelected()) {
+                        System.out.println("percent");
+                        target = 1;
+                    } else if (target_price_cb.isSelected()) {
+                        System.out.println("price");
+                        target = 2;
+                    }
 
-                        Double target_price = .0;
+                    Double target_price = .0;
 
-                        if (target == 1) {
-                            target_price = Double.parseDouble(target_text.getText());
-                        } else if (target == 2) {
-                            target_price = Double.parseDouble(target_text.getText());
-                        }
+                    if (target == 1) {
+                        target_price = Double.parseDouble(target_text.getText());
+                    } else if (target == 2) {
+                        target_price = Double.parseDouble(target_text.getText());
+                    }
 
-                        String coin_name = coinList.getSelectedItem().toString();
-                        System.out.println(coin_name);
-                        System.out.println(target_price);
-                        System.out.println(target_price.getClass().getName());
-                        Trail tr = new Trail(client, coin_name, target_price, stop, trail, status_text, target, amount, info_text);
-                        w1 = tr.createWorker();
-                        w1.execute();
+                    String coin_name = coinList.getSelectedItem().toString();
+                    System.out.println(coin_name);
+                    System.out.println(target_price);
+                    System.out.println(target_price.getClass().getName());
+                    Trail tr = new Trail(client, coin_name, target_price, stop, trail, status_text, target, amount, info_text);
+                    w1 = tr.createWorker();
+                    w1.execute();
 
                 }
             }
@@ -174,9 +172,11 @@ public class Trade {
                 int dialogResult = JOptionPane.showConfirmDialog(null, selected_coin + " devam?", "Coin Seçimi", dialogButton);
                 if(dialogResult == 0) {
                     System.out.println("Yes option");
+                    long start = System.currentTimeMillis();
+                    long end = System.currentTimeMillis();
+                    long gap = end - start;
 
-
-                    Account account = client.getAccount(BinanceApiConstants.DEFAULT_RECEIVING_WINDOW, client.getServerTime());
+                    Account account = client.getAccount(BinanceApiConstants.DEFAULT_RECEIVING_WINDOW, client.getServerTime() + gap);
 
                     String coin_price = "" + client.getPrice(selected_coin).getPrice();
 
