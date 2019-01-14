@@ -1,19 +1,25 @@
 package com.kmt.trailing.bot;
 
 import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.NewOrderResponse;
+import com.binance.api.client.domain.general.ExchangeInfo;
+import com.binance.api.client.domain.general.FilterType;
+import com.binance.api.client.domain.general.SymbolFilter;
+import com.binance.api.client.domain.general.SymbolInfo;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.binance.api.client.domain.account.NewOrder.marketBuy;
-import static com.binance.api.client.domain.account.NewOrder.marketSell;
+import static com.binance.api.client.domain.account.NewOrder.*;
 
 public class Trail {
 
@@ -51,6 +57,15 @@ public class Trail {
         return String.format(Locale.US,"%.8f", d);
     }
 
+    public Double roundPrice(Double priceD, Double ticker_size) {
+        Double result = priceD;
+        Double bolCarp = 1.0 / ticker_size;
+        result = result * bolCarp;
+        result = Math.floor(result);
+        result = result / bolCarp;
+        return result;
+    }
+
     public String currentTime() {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         Date date = new Date();
@@ -70,6 +85,14 @@ public class Trail {
                     trigger_price = Double.parseDouble(client.getPrice(coin).getPrice()) * ((100+trigger_price)/100);
                 }
 
+
+
+                ExchangeInfo exchangeInfo = client.getExchangeInfo();
+                SymbolInfo symbolInfo = exchangeInfo.getSymbolInfo(coin);
+                SymbolFilter symbolFilter = symbolInfo.getSymbolFilter(FilterType.PRICE_FILTER);
+                Double tickerSize =  Double.parseDouble(symbolFilter.getTickSize());
+
+
                 info_text.append("\nCOIN: " + coin + "\nTRAIL TETİKLEME FİYATI: " + formatDouble(trigger_price) + "\n");
 
                 while (Double.parseDouble(client.getPrice(coin).getPrice()) < trigger_price) {
@@ -78,11 +101,62 @@ public class Trail {
                     String temp_price_formatted = formatDouble(temp_price);
 
                     if (temp_price <= stop){
-                        // stop loss . market sell
-                        NewOrderResponse resp = client.newOrder(marketSell(coin, amount));
-                        System.out.println(resp);
-                        info_text.append("\n-----\n" + currentTime() + " STOP. Anlık fiyat: " + temp_price_formatted);
-                        status_text.append("\n-----\n" + currentTime() + " STOP. Anlık fiyat: " + temp_price_formatted);
+
+                        // STOP LOSS
+
+                        Boolean flag = false;
+
+                        status_text.append("\n" + currentTime() + " MARKET SELL EMRİ VERİLİYOR ");
+
+                        // MARKET SELL ORDER
+                        try {
+                            NewOrderResponse resp = client.newOrder(marketSell(coin, amount));
+                            flag = false;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            StringWriter errors = new StringWriter();
+                            e.printStackTrace(new PrintWriter(errors));
+
+                            status_text.append("\n" + errors.toString());
+                            flag = true;
+                        }
+
+
+                        if (flag) {
+
+                            status_text.append("\n" + currentTime() + " HATA! MARKET SELL EMRİ VERİLEMEDİ. ");
+                            status_text.append("\n" + currentTime() + " LIMIT SELL EMRİ VERİLİYOR. ");
+
+                            waitFor(6000);
+
+                            // LIMIT SELL ORDER
+                            try{
+                                Double limit_sell_price = Double.parseDouble(client.getPrice(coin).getPrice()) * 0.997;
+                                limit_sell_price = roundPrice(limit_sell_price, tickerSize);
+                                String limit_sell_price_str = limit_sell_price.toString();
+
+                                NewOrderResponse resp = client.newOrder(limitSell(coin, TimeInForce.GTC, amount, limit_sell_price_str));
+                                System.out.println(resp);
+                                flag = false;
+                            } catch (Exception e){
+                                e.printStackTrace();
+                                status_text.append("\n" + currentTime() + " HATA! LIMIT SELL EMRİ VERİLEMEDİ. ");
+                                StringWriter errors = new StringWriter();
+                                e.printStackTrace(new PrintWriter(errors));
+
+                                status_text.append("\n" + errors.toString());
+                                flag = true;
+                            }
+
+                        }
+
+
+                        if(!flag) {
+                            info_text.append("\n-----\n" + currentTime() + " STOP. Anlık fiyat: " + temp_price_formatted);
+                            status_text.append("\n-----\n" + currentTime() + " STOP. Anlık fiyat: " + temp_price_formatted);
+                        }
+
+                        // stop worker
                         return null;
                     }
 
@@ -129,17 +203,89 @@ public class Trail {
                     waitFor(5000);
                 }
 
-                // market sell order
-                try{
+
+                Boolean flag = false;
+
+
+                status_text.append("\n" + currentTime() + " MARKET SELL EMRİ VERİLİYOR ");
+
+
+                // MARKET SELL ORDER
+                try {
                     NewOrderResponse resp = client.newOrder(marketSell(coin, amount));
-                } catch (Exception e){
+                    flag = false;
+                } catch (Exception e) {
                     e.printStackTrace();
-                    status_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " HATA! SATIŞ EMRİ VERİLEMEDİ. ");
+                    StringWriter errors = new StringWriter();
+                    e.printStackTrace(new PrintWriter(errors));
+
+                    status_text.append("\n" + errors.toString());
+                    flag = true;
                 }
 
 
-                status_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " SATIŞ YAPILDI");
-                info_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " SATIŞ YAPILDI");
+
+                if(flag) {
+
+
+                    status_text.append("\n" + currentTime() + " HATA! MARKET SELL EMRİ VERİLEMEDİ. ");
+                    status_text.append("\n" + currentTime() + " LIMIT SELL EMRİ VERİLİYOR ");
+
+                    waitFor(6000);
+
+                    // LIMIT SELL ORDER
+                    try{
+                        Double limit_sell_price = Double.parseDouble(client.getPrice(coin).getPrice()) * 0.997;
+                        limit_sell_price = roundPrice(limit_sell_price, tickerSize);
+                        String limit_sell_price_str = limit_sell_price.toString();
+
+                        NewOrderResponse resp = client.newOrder(limitSell(coin, TimeInForce.GTC, amount, limit_sell_price_str));
+                        System.out.println(resp);
+                        flag = false;
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        status_text.append("\n" + currentTime() + " HATA! LIMIT SELL EMRİ VERİLEMEDİ. ");
+
+
+                        StringWriter errors = new StringWriter();
+                        e.printStackTrace(new PrintWriter(errors));
+
+                        status_text.append("\n" + errors.toString());
+                        flag = true;
+                    }
+
+                }
+
+
+                if(!flag) {
+                    status_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " SATIŞ YAPILDI");
+                    info_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " SATIŞ YAPILDI");
+                }
+
+                /*
+                Boolean flag = false;
+                // sell order
+                try{
+                    // market order
+                    //NewOrderResponse resp = client.newOrder(marketSell(coin, amount));
+
+                    String sell_price = formatDouble(Double.parseDouble(client.getPrice(coin).getPrice()) * 0.997);
+
+                    NewOrderResponse resp = client.newOrder(limitSell(coin, TimeInForce.GTC, amount, sell_price));
+
+                    System.out.println(resp);
+                    System.out.println(sell_price);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    status_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " HATA! SATIŞ EMRİ VERİLEMEDİ. ");
+                    flag = true;
+                }
+
+                if(!flag) {
+                    status_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " SATIŞ YAPILDI");
+                    info_text.append("\n" + currentTime() + " " + formatDouble(last_price) + " SATIŞ YAPILDI");
+                }
+                */
 
                 // Finished
                 return null;
