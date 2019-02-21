@@ -120,7 +120,7 @@
             <properties>
               <columns value="10"/>
               <editable value="false"/>
-              <text value="KM Trailing Bot v0.1.3"/>
+              <text value="KM Trailing Bot v1.0"/>
             </properties>
           </component>
         </children>

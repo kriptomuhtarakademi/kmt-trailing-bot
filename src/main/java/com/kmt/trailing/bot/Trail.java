@@ -18,8 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static com.binance.api.client.domain.account.NewOrder.*;
+
 
 public class Trail {
 
@@ -72,6 +74,26 @@ public class Trail {
         return "" + dateFormat.format(date); // 12:08:43
     }
 
+
+    public String getTicker() {
+        int count = 0;
+        int maxTries = 999;
+        while(true) {
+            try {
+                String ticker = client.getPrice(coin).getPrice();
+                return ticker;
+                // break out of loop, or return, on success
+            } catch (Exception e) {
+                // handle exception
+                e.printStackTrace();
+                status_text.append(currentTime() + " [!] BAĞLANTI SORUNU. Borsa ile bağlantı kurulamadı.\n7 saniye içinde tekrar denenecek.\n\n");
+                waitFor(7000);
+                if (++count == maxTries) return "error";
+            }
+        }
+
+    }
+
     /**
      * Create the SwingWorker for trailing
      */
@@ -82,7 +104,7 @@ public class Trail {
 
                 if(target == 1) {
                     //percent
-                    trigger_price = Double.parseDouble(client.getPrice(coin).getPrice()) * ((100+trigger_price)/100);
+                    trigger_price = Double.parseDouble(getTicker()) * ((100+trigger_price)/100);
                 }
 
 
@@ -95,9 +117,9 @@ public class Trail {
 
                 info_text.append("\nCOIN: " + coin + "\nTRAIL TETİKLEME FİYATI: " + formatDouble(trigger_price) + "\n");
 
-                while (Double.parseDouble(client.getPrice(coin).getPrice()) < trigger_price) {
+                while (Double.parseDouble(getTicker()) < trigger_price) {
 
-                    Double temp_price = Double.parseDouble(client.getPrice(coin).getPrice());
+                    Double temp_price = Double.parseDouble(getTicker());
                     String temp_price_formatted = formatDouble(temp_price);
 
                     if (temp_price <= stop){
@@ -131,7 +153,7 @@ public class Trail {
 
                             // LIMIT SELL ORDER
                             try{
-                                Double limit_sell_price = Double.parseDouble(client.getPrice(coin).getPrice()) * 0.997;
+                                Double limit_sell_price = Double.parseDouble(getTicker()) * 0.997;
                                 limit_sell_price = roundPrice(limit_sell_price, tickerSize);
                                 String limit_sell_price_str = limit_sell_price.toString();
 
@@ -167,16 +189,16 @@ public class Trail {
 
                 // start trail
                 // init trail val
-                trail_value = Double.parseDouble(client.getPrice(coin).getPrice()) * ((100-trail_percent) / 100);
+                trail_value = Double.parseDouble(getTicker()) * ((100-trail_percent) / 100);
                 save_trail_value = trail_value;
 
                 String trail_value_formatted = formatDouble(trail_value);
 
                 status_text.append("\n" + currentTime() +" Başlangıç trailing değeri: " + trail_value_formatted);
 
-                while (trail_value <= Double.parseDouble(client.getPrice(coin).getPrice())) {
+                while (trail_value <= Double.parseDouble(getTicker())) {
 
-                    current_price = Double.parseDouble(client.getPrice(coin).getPrice());
+                    current_price = Double.parseDouble(getTicker());
                     String current_price_formatted = formatDouble(current_price);
                     status_text.append("\n------\n" + currentTime() + " Trailing etkin / Anlık fiyat: " + current_price_formatted);
 
@@ -192,14 +214,14 @@ public class Trail {
 
                     }
 
-                    // publish trail val
-                    publish(trail_value);
+
+
 
                     trail_value_formatted = formatDouble(trail_value);
 
                     status_text.append("\nTrailing stop: " + trail_value_formatted + "\n");
                     // update last price
-                    last_price = Double.parseDouble(client.getPrice(coin).getPrice());
+                    last_price = Double.parseDouble(getTicker());
                     waitFor(5000);
                 }
 
@@ -235,7 +257,7 @@ public class Trail {
 
                     // LIMIT SELL ORDER
                     try{
-                        Double limit_sell_price = Double.parseDouble(client.getPrice(coin).getPrice()) * 0.997;
+                        Double limit_sell_price = Double.parseDouble(getTicker()) * 0.997;
                         limit_sell_price = roundPrice(limit_sell_price, tickerSize);
                         String limit_sell_price_str = limit_sell_price.toString();
 
@@ -295,8 +317,7 @@ public class Trail {
             protected void process(List<Double> chunks) {
                 // Get Info
                 for (Double number : chunks) {
-                    //status_text.append("\ntrail: " + number);
-                    System.out.println("trail: " + number);
+                    System.out.println("test");
                 }
             }
 
